@@ -24,10 +24,9 @@ def get_most_frequent_words(text, count=10):
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-f", "--file", type="string", dest="filepath")
-    parser.add_option("-c", "--count", type="int", dest="count")
+    parser.add_option("-c", "--count", type="int", dest="count", default=10)
     (options, args) = parser.parse_args()
-    count = options.count if options.count else 10
     text = load_data(options.filepath)
     if text:
-        for w in get_most_frequent_words(text, count):
+        for w in get_most_frequent_words(text, options.count):
             print(w)
