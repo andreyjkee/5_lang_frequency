@@ -1,5 +1,6 @@
 import tokenize
 from optparse import OptionParser
+from collections import Counter
 import re
 
 
@@ -15,17 +16,16 @@ def load_data(filepath):
 
 def get_most_frequent_words(text, count=10):
     word_list = re.findall(r'(\w+)', text)
-    word_freq = [word_list.count(w) for w in word_list]
-    word_freq_dict = dict(zip(word_list, word_freq))
-    sorted_words = sorted(word_freq_dict.items(), key=lambda x: x[1])
-    return [pair[0] for pair in sorted_words[-count:]][::-1]
+    return [pair[0] for pair in Counter(word_list).most_common(count)]
 
 
 if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-f", "--file", type="string", dest="filepath")
     parser.add_option("-c", "--count", type="int", dest="count", default=10)
-    (options, args) = parser.parse_args()
+    options, args = parser.parse_args()
+    if not options.filepath:
+        parser.error('Option -f is required')
     text = load_data(options.filepath)
     if text:
         for w in get_most_frequent_words(text, options.count):
