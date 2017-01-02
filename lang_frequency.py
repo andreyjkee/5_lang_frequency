@@ -1,5 +1,4 @@
-import tokenize
-from optparse import OptionParser
+import argparse
 from collections import Counter
 import re
 
@@ -7,12 +6,8 @@ import re
 def load_data(filepath):
     if not filepath:
         raise Exception('Не указан путь к файлу')
-    try:
-        with tokenize.open(filepath) as f:
-            return f.read()
-    except FileNotFoundError:
-        print('Файл : ', filepath, 'не найден')
-
+    with filepath as f:
+        return f.read()
 
 def get_most_frequent_words(text, count=10):
     word_list = re.findall(r'(\w+)', text)
@@ -20,12 +15,10 @@ def get_most_frequent_words(text, count=10):
 
 
 if __name__ == '__main__':
-    parser = OptionParser()
-    parser.add_option("-f", "--file", type="string", dest="filepath")
-    parser.add_option("-c", "--count", type="int", dest="count", default=10)
-    options, args = parser.parse_args()
-    if not options.filepath:
-        parser.error('Option -f is required')
+    parser = argparse.ArgumentParser(description="Get most frequent words")
+    parser.add_argument("-f", "--file", type=argparse.FileType('r'), dest="filepath", required=True)
+    parser.add_argument("-c", "--count", type=int, default=10)
+    options = parser.parse_args()
     text = load_data(options.filepath)
     if text:
         for w in get_most_frequent_words(text, options.count):
